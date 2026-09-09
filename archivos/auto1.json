@@ -1,0 +1,26 @@
+{
+  "estadoInicial": "q0",
+  "estados": [
+    {
+      "nombre": "q0",
+      "aceptador": false
+    },
+    {
+      "nombre": "q1",
+      "aceptador": true
+    }
+  ],
+  "transiciones": [
+    {
+      "origen": "q0",
+      "destino": "q1",
+      "simbolo": "a"
+    },
+    {
+      "origen": "q1",
+      "destino": "q0",
+      "simbolo": "b"
+    }
+  ],
+  "alfabeto": ["a", "b"]
+}
