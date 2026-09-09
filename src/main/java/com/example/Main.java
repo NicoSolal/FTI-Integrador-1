@@ -11,6 +11,9 @@ public class Main {
         String rutaArchivo = "archivos/auto1.json";
         automata = constructor.construirDesdeJson(rutaArchivo);
 
+        System.out.println(automata);
+        System.out.println("Es deterministico: " + automata.esDeterministico() + "\n");
+
         String[] entradas = {"a", "b", "ab", "ba", "abababa"};
         for (String entrada : entradas) {
             Estado estadoFinal = automata.transicionar(entrada);

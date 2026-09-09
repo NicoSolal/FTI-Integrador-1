@@ -1,0 +1,23 @@
+Pasos AFND -> AFD:
+
+1. Crear nuevos estados conjuntos (<S1, S2, ..., Sn>)
+2. Definir transiciones para el alfabeto de los nuevos estados (y si son finalizadores)
+3. Eliminar los estados inalcanzables
+
+Pasos Minimiazación AFD:
+
+1. Depuración (eliminar estados inalcanzables)
+2. Partición inicial (clases 0-equivalentes)
+3. Refinamiento iterativo (clases k-equivalentes)
+4. Construcción (defino al autómata mínimo resultante)
+
+Pasos transformación gramáticas a forma normal Chomsky:
+
+1. Eliminar reglas lambda (agregar reglas de producción equivalentes)
+   (S -> aM ^ M -> bM | lambda => S -> aM | a ^ M -> bM | b)
+2. Agregar símbolos no terminales por cada simbolo terminal perteneciente al alfabeto
+   (S -> x => X -> x ^ S -> X)
+3. Reescribir reglas con más de 2 símbolos no terminales
+   (S -> XAB => S -> XR1 ^ R1 -> AB)
+4. Reemplazar reglas de 1 símbolo no terminal a equivalentes
+   (S -> N ^ N -> n => S -> n)

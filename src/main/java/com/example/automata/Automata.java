@@ -33,6 +33,7 @@ public class Automata {
     private Estado transicion(Estado estadoActual, String simbolo) {
         for (Transicion transicion : this.transiciones) {
             if (transicion.getOrigen().equals(estadoActual) && transicion.getCodigo().equals(simbolo)) {
+                System.out.println("Transición: " + transicion.getOrigen().getNombre() + " --" + simbolo + "--> " + transicion.getDestino().getNombre());
                 return transicion.getDestino();
             }
         }
@@ -102,5 +103,36 @@ public class Automata {
 
     public void setAlfabeto(List<String> alfabeto) {
         this.alfabeto = alfabeto;
+    }
+
+    public boolean esDeterministico() {
+        for(Estado estado : this.estados) {
+            if(tieneDosTransicionesIguales(estado)) return false;
+        }
+        return true;
+    }
+
+    private boolean tieneDosTransicionesIguales(Estado estado) {
+        List<Transicion> transicionesEstado = new ArrayList<>();
+        for(Transicion transicion : this.transiciones)
+            if(transicion.getOrigen().equals(estado)) transicionesEstado.add(transicion);
+
+        for(int i = 0; i < transicionesEstado.size(); i++) {
+            for(int j = i + 1; j < transicionesEstado.size(); j++) {
+                if(transicionesEstado.get(i).getCodigo().equals(transicionesEstado.get(j).getCodigo())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (Estado estado : estados) {
+            sb.append(estado.toString()).append("\n");
+        }
+        return "Automata con estados: \n" + sb.toString();
     }
 }

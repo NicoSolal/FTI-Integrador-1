@@ -20,4 +20,9 @@ public class Estado {
     public boolean isAceptador() {
         return this.aceptador;
     }
+
+    @Override
+    public String toString() {
+        return nombre + " aceptador=" + aceptador;
+    }
 }
