@@ -4,6 +4,8 @@ import com.example.automata.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,19 +21,19 @@ public class Constructor {
         try {
             JsonNode rootNode = mapper.readTree(new File(rutaArchivo));
             
-            String estadoInicial = rootNode.get("estadoInicial").asText();
-            automata.setEstadoInicial(estadoInicial);
-            
             JsonNode estadosNode = rootNode.get("estados");
             if (estadosNode.isArray()) {
                 for (JsonNode estado : estadosNode) {
                     String nombre = estado.get("nombre").asText();
                     boolean aceptador = estado.get("aceptador").asBoolean();
-                    
+
                     automata.agregarEstado(nombre, aceptador);
                 }
             }
-            
+
+            String estadoInicial = rootNode.get("estadoInicial").asText();
+            automata.setEstadoInicial(estadoInicial);
+
             JsonNode transicionesNode = rootNode.get("transiciones");
             if (transicionesNode.isArray()) {
                 for (JsonNode transicion : transicionesNode) {
@@ -59,5 +61,39 @@ public class Constructor {
         }
         
         return automata;
+    }
+
+    public void guardarEnJson(Automata automata, String rutaArchivo) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode rootNode = mapper.createObjectNode();
+
+        rootNode.put("estadoInicial", automata.getEstadoInicial().getNombre());
+
+        ArrayNode estadosNode = rootNode.putArray("estados");
+        for (Estado estado : automata.getEstados()) {
+            ObjectNode estadoNode = estadosNode.addObject();
+            estadoNode.put("nombre", estado.getNombre());
+            estadoNode.put("aceptador", estado.isAceptador());
+        }
+
+        ArrayNode transicionesNode = rootNode.putArray("transiciones");
+        for (Transicion transicion : automata.getTransiciones()) {
+            ObjectNode transicionNode = transicionesNode.addObject();
+            transicionNode.put("origen", transicion.getOrigen().getNombre());
+            transicionNode.put("destino", transicion.getDestino().getNombre());
+            transicionNode.put("simbolo", transicion.getCodigo());
+        }
+
+        ArrayNode alfabetoNode = rootNode.putArray("alfabeto");
+        for (String simbolo : automata.getAlfabeto()) {
+            alfabetoNode.add(simbolo);
+        }
+
+        try {
+            mapper.writerWithDefaultPrettyPrinter().writeValue(new File(rutaArchivo), rootNode);
+        } catch (Exception e) {
+            System.err.println("Error al escribir el archivo JSON: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
