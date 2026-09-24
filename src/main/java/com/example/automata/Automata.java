@@ -18,29 +18,6 @@ public class Automata {
         this.alfabeto = new ArrayList<>();
     }
 
-    public Estado transicionar(String entrada) {
-        Estado estadoActual = this.getEstadoInicial();
-        for (char simbolo : entrada.toCharArray()) {
-            estadoActual = this.transicion(estadoActual, String.valueOf(simbolo));
-            if (estadoActual == null) {
-                return null;
-            }
-        }
-        
-        return estadoActual;
-    }
-    
-    private Estado transicion(Estado estadoActual, String simbolo) {
-        for (Transicion transicion : this.transiciones) {
-            if (transicion.getOrigen().equals(estadoActual) && transicion.getCodigo().equals(simbolo)) {
-                System.out.println("Transición: " + transicion.getOrigen().getNombre() + " --" + simbolo + "--> " + transicion.getDestino().getNombre());
-                return transicion.getDestino();
-            }
-        }
-
-        return null;
-    }
-
     public Estado agregarEstado(String nombre, boolean aceptador) {
         Estado estado = new Estado(nombre, aceptador);
         if(this.estados.isEmpty()) {
@@ -105,26 +82,35 @@ public class Automata {
         this.alfabeto = alfabeto;
     }
 
-    public boolean esDeterministico() {
-        for(Estado estado : this.estados) {
-            if(tieneDosTransicionesIguales(estado)) return false;
+    public Automata clonar() {
+        Automata result = new Automata();
+        result.setAlfabeto(new ArrayList<>(this.alfabeto));
+
+        for (Estado estado : this.estados) {
+            result.agregarEstado(estado.getNombre(), estado.isAceptador());
         }
-        return true;
+        result.setEstadoInicial(this.estadoInicial);
+
+        for (Transicion transicion : this.transiciones) {
+            result.agregarTransicion(transicion.getCodigo(), result.getEstado(transicion.getOrigen().getNombre()), result.getEstado(transicion.getDestino().getNombre()));
+        }
+        return result;
     }
 
-    private boolean tieneDosTransicionesIguales(Estado estado) {
-        List<Transicion> transicionesEstado = new ArrayList<>();
-        for(Transicion transicion : this.transiciones)
-            if(transicion.getOrigen().equals(estado)) transicionesEstado.add(transicion);
+    public void eliminarInalcanzables() {
+        List<Estado> alcanzables = new ArrayList<>();
+        alcanzables.add(this.getEstadoInicial());
 
-        for(int i = 0; i < transicionesEstado.size(); i++) {
-            for(int j = i + 1; j < transicionesEstado.size(); j++) {
-                if(transicionesEstado.get(i).getCodigo().equals(transicionesEstado.get(j).getCodigo())) {
-                    return true;
+        for (int i = 0; i < alcanzables.size(); i++) {
+            for (Transicion transicion : this.transiciones) {
+                if (transicion.getOrigen().equals(alcanzables.get(i)) && !alcanzables.contains(transicion.getDestino())) {
+                    alcanzables.add(transicion.getDestino());
                 }
             }
         }
-        return false;
+
+        this.estados.removeIf(estado -> !alcanzables.contains(estado));
+        this.transiciones.removeIf(transicion -> !alcanzables.contains(transicion.getOrigen()));
     }
 
     @Override
@@ -132,6 +118,11 @@ public class Automata {
         StringBuilder sb = new StringBuilder();
         for (Estado estado : estados) {
             sb.append(estado.toString()).append("\n");
+        }
+        sb.append("Transiciones:\n");
+        for (Transicion transicion : transiciones) {
+            sb.append(transicion.getOrigen().getNombre()).append(" --").append(transicion.getCodigo())
+              .append("--> ").append(transicion.getDestino().getNombre()).append("\n");
         }
         return "Automata con estados: \n" + sb.toString();
     }
