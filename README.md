@@ -3,8 +3,8 @@ El programa lee un archivo json que contiene un autómata y hace lo siguiente pa
 1. Si es no determinista (AFND), lo convierte a determinista (AFD).
 2. Minimiza el AFD.
 3. Valida el resultado:
-   - el lenguaje del AFD minimizado es equivalente al del autómata original, para esto se comparan mil
-     cadenas de longitudes aleatorias entre 1 y 30 con simbolos aleatorios pertenecientes al alfabeto.
+   - el lenguaje del AFD minimizado es equivalente al del autómata original, para esto se usa el
+     método de árbol de moore
    - la cantidad de estados se redujo o se mantuvo.
 4. Guarda el autómata minimizado en un nuevo archivo JSON.
 
@@ -30,5 +30,5 @@ private static String rutaArchivo = "archivos/autox.json";
 VALIDACIÓN DE CADENAS DE ENTRADA:
 
 Al ejecutar el programa y procesar el autómata al llegar al minimizado se entra en un
-bucle en el que se puede inputar cualquier cadena que se quiera, y se va a validar, 
+bucle en el que se puede inputar cualquier cadena que se quiera, y se va a validar,
 devolviendo un mensaje diciendo si se aceptó o no.
