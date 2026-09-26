@@ -1,0 +1,120 @@
+{
+  "estadoInicial": "A",
+  "estados": [
+    {
+      "nombre": "A",
+      "aceptador": false
+    },
+    {
+      "nombre": "B",
+      "aceptador": false
+    },
+    {
+      "nombre": "C",
+      "aceptador": true
+    },
+    {
+      "nombre": "D",
+      "aceptador": false
+    },
+    {
+      "nombre": "E",
+      "aceptador": false
+    },
+    {
+      "nombre": "F",
+      "aceptador": false
+    },
+    {
+      "nombre": "G",
+      "aceptador": false
+    },
+    {
+      "nombre": "H",
+      "aceptador": false
+    }
+  ],
+  "transiciones": [
+    {
+      "origen": "A",
+      "destino": "B",
+      "simbolo": "0"
+    },
+    {
+      "origen": "A",
+      "destino": "F",
+      "simbolo": "1"
+    },
+    {
+      "origen": "B",
+      "destino": "G",
+      "simbolo": "0"
+    },
+    {
+      "origen": "B",
+      "destino": "C",
+      "simbolo": "1"
+    },
+    {
+      "origen": "C",
+      "destino": "A",
+      "simbolo": "0"
+    },
+    {
+      "origen": "C",
+      "destino": "C",
+      "simbolo": "1"
+    },
+    {
+      "origen": "D",
+      "destino": "C",
+      "simbolo": "0"
+    },
+    {
+      "origen": "D",
+      "destino": "G",
+      "simbolo": "1"
+    },
+    {
+      "origen": "E",
+      "destino": "H",
+      "simbolo": "0"
+    },
+    {
+      "origen": "E",
+      "destino": "F",
+      "simbolo": "1"
+    },
+    {
+      "origen": "F",
+      "destino": "C",
+      "simbolo": "0"
+    },
+    {
+      "origen": "F",
+      "destino": "G",
+      "simbolo": "1"
+    },
+    {
+      "origen": "G",
+      "destino": "G",
+      "simbolo": "0"
+    },
+    {
+      "origen": "G",
+      "destino": "E",
+      "simbolo": "1"
+    },
+    {
+      "origen": "H",
+      "destino": "G",
+      "simbolo": "0"
+    },
+    {
+      "origen": "H",
+      "destino": "C",
+      "simbolo": "1"
+    }
+  ],
+  "alfabeto": ["0", "1"]
+}
