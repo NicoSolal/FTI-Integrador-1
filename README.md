@@ -16,10 +16,10 @@ REQUISITOS:
 
 CON MAKE:
 
-make            limpia, compila y ejecuta
-make compile    solo compila
-make run        solo ejecuta
-make clean      borra la carpeta target/
+make (limpia, compila y ejecuta)
+make compile (solo compila)
+make run (solo ejecuta)
+make clean (borra la carpeta target/)
 
 ELEGIR EL AUTÓMATA DE ENTRADA:
 
