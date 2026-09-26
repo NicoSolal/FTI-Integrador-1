@@ -3,13 +3,10 @@ package com.example.validador;
 import com.example.automata.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 public class Validador {
-    private static final int CANTIDAD_CADENAS = 1000;
-    private static final int LARGO_MAXIMO = 10;
-
     public Validador() { }
 
     public Estado transicionar(Automata automata, String entrada) {
@@ -57,32 +54,78 @@ public class Validador {
     }
 
     public boolean sonEquivalentes(Automata original, Automata minimizado) {
-        for (String cadena : generarCadenas(original.getAlfabeto())) {
-            if (aceptaCadena(original, cadena) != aceptaCadena(minimizado, cadena)) {
-                System.out.println("La cadena \"" + cadena + "\" da distinto resultado en ambos automatas.");
+        List<String> alfabeto = new ArrayList<>(original.getAlfabeto());
+        for (String simbolo : minimizado.getAlfabeto()) {
+            if (!alfabeto.contains(simbolo)) alfabeto.add(simbolo);
+        }
+
+        List<Estado> inicialOriginal = new ArrayList<>(List.of(original.getEstadoInicial()));
+        List<Estado> inicialMinimizado = new ArrayList<>(List.of(minimizado.getEstadoInicial()));
+
+        List<List<Estado>> pendientesOriginal = new ArrayList<>(List.of(inicialOriginal));
+        List<List<Estado>> pendientesMinimizado = new ArrayList<>(List.of(inicialMinimizado));
+        List<String> visitados = new ArrayList<>(List.of(clavePar(inicialOriginal, inicialMinimizado)));
+
+        System.out.println("Arbol de Moore:");
+        while (!pendientesOriginal.isEmpty()) {
+            List<Estado> actualOriginal = pendientesOriginal.remove(0);
+            List<Estado> actualMinimizado = pendientesMinimizado.remove(0);
+
+            if (tieneAceptador(actualOriginal) != tieneAceptador(actualMinimizado)) {
+                System.out.println("  " + clavePar(actualOriginal, actualMinimizado)
+                        + " -> un estado es aceptador y el otro no, no son equivalentes.");
                 return false;
+            }
+
+            for (String simbolo : alfabeto) {
+                List<Estado> siguienteOriginal = destinos(original, actualOriginal, simbolo);
+                List<Estado> siguienteMinimizado = destinos(minimizado, actualMinimizado, simbolo);
+                String clave = clavePar(siguienteOriginal, siguienteMinimizado);
+
+                boolean repetido = visitados.contains(clave);
+                System.out.println("  " + clavePar(actualOriginal, actualMinimizado) + " --" + simbolo + "--> "
+                        + clave + (repetido ? " (repetido)" : ""));
+                if (!repetido) {
+                    visitados.add(clave);
+                    pendientesOriginal.add(siguienteOriginal);
+                    pendientesMinimizado.add(siguienteMinimizado);
+                }
             }
         }
         return true;
     }
 
-    public boolean seRedujo(Automata afd, Automata minimizado) {
-        return minimizado.getEstados().size() <= afd.getEstados().size();
-    }
-
-    private List<String> generarCadenas(List<String> alfabeto) {
-        List<String> result = new ArrayList<>();
-        Random random = new Random();
-
-        for (int i = 0; i < CANTIDAD_CADENAS; i++) {
-            int largo = random.nextInt(LARGO_MAXIMO + 1);
-            String cadena = "";
-            for (int j = 0; j < largo; j++) {
-                cadena += alfabeto.get(random.nextInt(alfabeto.size()));
+    private List<Estado> destinos(Automata automata, List<Estado> estados, String simbolo) {
+        List<Estado> result = new ArrayList<>();
+        for (Transicion transicion : automata.getTransiciones()) {
+            if (estados.contains(transicion.getOrigen()) && transicion.getCodigo().equals(simbolo)
+                    && !result.contains(transicion.getDestino())) {
+                result.add(transicion.getDestino());
             }
-            result.add(cadena);
         }
         return result;
+    }
+
+    private boolean tieneAceptador(List<Estado> estados) {
+        for (Estado estado : estados) {
+            if (estado.isAceptador()) return true;
+        }
+        return false;
+    }
+
+    private String clavePar(List<Estado> estadosOriginal, List<Estado> estadosMinimizado) {
+        return "(" + nombres(estadosOriginal) + ", " + nombres(estadosMinimizado) + ")";
+    }
+
+    private String nombres(List<Estado> estados) {
+        List<String> nombres = new ArrayList<>();
+        for (Estado estado : estados) nombres.add(estado.getNombre());
+        Collections.sort(nombres);
+        return "{" + String.join(",", nombres) + "}";
+    }
+
+    public boolean seRedujo(Automata afd, Automata minimizado) {
+        return minimizado.getEstados().size() <= afd.getEstados().size();
     }
 
     public boolean esDeterministico(Automata automata) {
