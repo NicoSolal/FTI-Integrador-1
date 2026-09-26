@@ -10,7 +10,7 @@ import com.example.validador.Validador;
 
 
 public class Main {
-    private static String rutaArchivoAutomata = "archivos/auto3.json";
+    private static String rutaArchivoAutomata = "archivos/auto5.json";
     
     public static void main(String[] args) {
         Automata automata = new Automata();
